@@ -1,0 +1,108 @@
+name: Lighthouse
+
+on: [push, pull_request]
+
+# Reduce ember's parallel-ness to 2,
+# the number of cores available on github actions.
+# See the following for details:
+# https://git.io/vdao3
+# https://help.github.com/en/actions/reference/virtual-environments-for-github-hosted-runners#supported-runners-and-hardware-resources
+env:
+  JOBS: 2
+
+jobs:
+  lighthouse:
+    name: Generate Lighthouse Score
+    runs-on: ubuntu-latest
+    # https://github.community/t/duplicate-checks-on-push-and-pull-request-simultaneous-event/18012/5
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    steps:
+      - uses: actions/checkout@v2
+
+      # Install the correct version of node
+      - name: Detect Node version
+        run: echo "##[set-output name=version;]$(cat .nvmrc)"
+        id: nvmrc
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "${{ steps.nvmrc.outputs.version }}"
+
+      # Restore yarn cache from between builds
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Restore dependencies from cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      # Install dependencies
+      - name: Install dependencies
+        run: yarn
+
+      - name: Run Lighthouse
+        run: |
+          mkdir lhci
+          yarn lighthouse
+        continue-on-error: true
+
+      - name: Store generated report
+        uses: actions/upload-artifact@v2
+        with:
+          name: lighthouse-report
+          path: lhci
+  compare-lighthouse:
+    # Only run on PR, not push
+    if: github.event_name == 'pull_request'
+    name: Compare Lighthouse Score
+    runs-on: ubuntu-latest
+    needs: lighthouse
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download PR Report
+        uses: actions/download-artifact@v2
+        with:
+          name: lighthouse-report
+          path: branch-report
+
+      - name: Download Base Report
+        run: |
+          # Get the URL of the latest run on master
+          export RUNS_URL="https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/lighthouse.yml/runs?branch=master&status=completed"
+          export LATEST_RUN_URL=$(curl $RUNS_URL | jq -r '.workflow_runs[0].url')
+
+          # Get the url of the lighthouse report
+          export ARTIFACT_URL=$(curl $LATEST_RUN_URL/artifacts \
+          | jq -r '.artifacts[] | select(.name == "lighthouse-report").archive_download_url')
+
+          # Download the lighthouse report
+          curl -L \
+          -u $GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }} \
+          -o master-report.zip \
+          $ARTIFACT_URL
+
+          # Extract the report
+          mkdir master-report
+          unzip master-report.zip -d master-report
+          rm master-report.zip
+
+      - name: Compare Reports
+        id: compare-reports
+        run: |
+          # Surely there is a better way to grep this
+          export PR_FILE=$(find branch-report | grep lighthouse | grep json)
+          export BASE_FILE=$(find master-report | grep lighthouse | grep json)
+
+          # Run the comparison script
+          node scripts/compare-lighthouse.js
+
+      - name: Comment on PR
+        uses: marocchino/sticky-pull-request-comment@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          header: lighthouse
+          path: comment-lighthouse.md

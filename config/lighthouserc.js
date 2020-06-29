@@ -3,12 +3,12 @@ module.exports = {
     collect: {
       method: 'node',
       headful: false,
-      url: 'http://localhost:4200',
-      startServerCommand: 'ember serve environment=production',
-      startServerReadyPattern: 'Build successful',
-      startServerReadyTimeout: 75000,
+      url: 'http://localhost:3000',
+      startServerCommand: 'node fastboot_server/server.js',
+      startServerReadyPattern: 'HTTP server started;',
+      startServerReadyTimeout: 100000,
       settings: {
-        skipAudits: ['is-on-https', 'uses-http2', 'color-contrast', 'redirects-http']
+        skipAudits: ['is-on-https', 'uses-http2', 'redirects-http']
       }
     },
     assert: {
