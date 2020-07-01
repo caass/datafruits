@@ -12,8 +12,6 @@ env:
 
 jobs:
   bundle-size:
-    # https://github.community/t/duplicate-checks-on-push-and-pull-request-simultaneous-event/18012/5
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     name: Analyze bundle size
     runs-on: ubuntu-latest
     steps:
@@ -47,6 +45,8 @@ jobs:
       - name: Check bundle size
         run: yarn bundle-size
 
+      - run: ls
+
       - name: Store generated report
         uses: actions/upload-artifact@v2
         with:
@@ -71,9 +71,13 @@ jobs:
           export RUNS_URL="https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs?branch=master&status=completed"
           export LATEST_RUN_URL=$(curl $RUNS_URL | jq -r '.workflow_runs[0].url')
 
+          echo $LATEST_RUN_URL
+
           # Get the url of the bundle size report
           export ARTIFACT_URL=$(curl $LATEST_RUN_URL/artifacts \
           | jq -r '.artifacts[] | select(.name == "bundle-size").archive_download_url')
+
+          echo $ARTIFACT_URL
 
           # Download the report
           curl -L \
