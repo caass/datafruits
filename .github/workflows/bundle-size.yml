@@ -68,16 +68,12 @@ jobs:
       - name: Download Base Report
         run: |
           # Get the URL of the latest run on master
-          export RUNS_URL="https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs?branch=master&status=completed"
+          export RUNS_URL="https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/bundle-size.yml/runs?branch=master&status=completed"
           export LATEST_RUN_URL=$(curl $RUNS_URL | jq -r '.workflow_runs[0].url')
-
-          echo $LATEST_RUN_URL
 
           # Get the url of the bundle size report
           export ARTIFACT_URL=$(curl $LATEST_RUN_URL/artifacts \
           | jq -r '.artifacts[] | select(.name == "bundle-size").archive_download_url')
-
-          echo $ARTIFACT_URL
 
           # Download the report
           curl -L \

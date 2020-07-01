@@ -70,7 +70,7 @@ jobs:
       - name: Download Base Report
         run: |
           # Get the URL of the latest run on master
-          export RUNS_URL="https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs?branch=master&status=completed"
+          export RUNS_URL="https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/lighthouse.yml/runs?branch=master&status=completed"
           export LATEST_RUN_URL=$(curl $RUNS_URL | jq -r '.workflow_runs[0].url')
 
           # Get the url of the lighthouse report
