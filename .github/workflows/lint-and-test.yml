@@ -12,8 +12,6 @@ env:
 
 jobs:
   lint-js:
-    # https://github.community/t/duplicate-checks-on-push-and-pull-request-simultaneous-event/18012/5
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     name: Lint JS
     runs-on: ubuntu-latest
     steps:
@@ -48,8 +46,6 @@ jobs:
       - name: Lint JS
         run: yarn lint:js
   lint-hbs:
-    # https://github.community/t/duplicate-checks-on-push-and-pull-request-simultaneous-event/18012/5
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     name: Lint HBS
     runs-on: ubuntu-latest
     steps:
@@ -84,8 +80,6 @@ jobs:
       - name: Lint HBS
         run: yarn lint:hbs
   test:
-    # https://github.community/t/duplicate-checks-on-push-and-pull-request-simultaneous-event/18012/5
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     name: Test
     runs-on: ubuntu-latest
     steps:
