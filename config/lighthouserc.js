@@ -1,23 +1,21 @@
 module.exports = {
   ci: {
     collect: {
-      method: 'node',
+      method: "node",
       headful: false,
-      url: 'http://localhost:3000',
-      startServerCommand: 'node fastboot_server/server.js',
-      startServerReadyPattern: 'HTTP server started;',
-      startServerReadyTimeout: 100000,
+      url: "http://localhost:3000",
+      startServerCommand: "node fastboot_server/server.js",
+      startServerReadyPattern: "HTTP server started;",
       settings: {
-        skipAudits: ['is-on-https', 'uses-http2', 'redirects-http']
-      }
-    },
-    assert: {
-      preset: 'lighthouse:recommended'
+        skipAudits: ["is-on-https", "uses-http2", "redirects-http"],
+        // --no-sandbox is needed when running Chrome inside a container
+        chromeFlags: process.env.CI ? "--no-sandbox" : null,
+      },
     },
     upload: {
-      target: 'filesystem',
-      outputDir: 'lhci',
-      reportFilenamePattern: 'lighthouse-report-%%DATE%%.%%EXTENSION%%'
+      target: "filesystem",
+      outputDir: "lhci",
+      reportFilenamePattern: "lighthouse-report-%%DATE%%.%%EXTENSION%%",
     },
   },
 };
