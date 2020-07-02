@@ -2,8 +2,8 @@
 const path = require("path");
 const fs = require("fs");
 
-const PR_FILE = path.resolve(process.env.PR_FILE);
-const BASE_FILE = path.resolve(process.env.BASE_FILE);
+const PR_FILE = path.resolve(process.cwd(), process.env.PR_FILE);
+const BASE_FILE = path.resolve(process.cwd(), process.env.BASE_FILE);
 
 const prBundle = JSON.parse(fs.readFileSync(PR_FILE));
 const baseBundle = JSON.parse(fs.readFileSync(BASE_FILE));

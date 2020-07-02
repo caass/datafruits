@@ -46,7 +46,6 @@ jobs:
         run: |
           mkdir lhci
           yarn lighthouse
-        continue-on-error: true
 
       - name: Store generated report
         uses: actions/upload-artifact@v2
