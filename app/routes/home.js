@@ -2,6 +2,7 @@ import classic from "ember-classic-decorator";
 import { inject as service } from "@ember/service";
 import Route from "@ember/routing/route";
 import { later } from "@ember/runloop";
+import aReallyBigThing from '../large'
 
 @classic
 export default class HomeRoute extends Route {
@@ -11,12 +12,14 @@ export default class HomeRoute extends Route {
   @service
   fastboot;
 
+  demoProperty = aReallyBigThing;
+
   model() {
     //return this.store.queryRecord('scheduled-show', {next: true});
   }
 
   afterModel() {
-    if(!this.fastboot.isFastBoot){
+    if (!this.fastboot.isFastBoot) {
       let locales = this.intl.locales;
       let language;
       if (navigator.languages) {
