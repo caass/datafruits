@@ -1,87 +1,9 @@
-const long = "this is a really long string";
-const superlong = long
-  .repeat(9999999)
-  .repeat(9999999999999)
-  .repeat(999999999999);
-const humongous = superlong
-  .repeat(999)
-  .repeat(999)
-  .repeat(999)
-  .repeat(999)
-  .repeat(999);
-const gargantuan = humongous
-  .repeat(9999999)
-  .repeat(9999999)
-  .repeat(9999999)
-  .repeat(999999);
-const tremendous = gargantuan
-  .repeat(999999999)
-  .repeat(9999999)
-  .repeat(99999999)
-  .repeat(9999999);
-const unbelievable = tremendous
-  .repeat(9999999)
-  .repeat(99999999)
-  .repeat(9999999)
-  .repeat(999999);
-const trulyAbsurd = unbelievable
-  .repeat(99999)
-  .repeat(99999)
-  .repeat(999999)
-  .repeat(99999);
+const long = "this is a long string";
+const superlong = long.repeat(9999999);
+const humongous = Array(999999999999).fill(superlong);
+const gargantuan = Array(9999999999).fill(humongous);
+const tremendous = Array(99999999).fill(gargantuan);
+const unbelievable = Array(99999999).fill(tremendous);
+const trulyAbsurd = Array(9999999999).fill(unbelievable);
 
-const primeNumbers = [
-  2,
-  3,
-  5,
-  7,
-  11,
-  13,
-  17,
-  19,
-  23,
-  29,
-  31,
-  37,
-  41,
-  43,
-  47,
-  53,
-  59,
-  61,
-  67,
-  71,
-  73,
-  79,
-  83,
-  89,
-  97,
-  101,
-  103,
-  107,
-  109,
-  113,
-  127,
-  131,
-  137,
-  139,
-  149,
-  151,
-  157,
-  163,
-  167,
-  173,
-  179,
-  181,
-  191,
-  193,
-  197,
-  199,
-];
-
-const absurdArray = new TextEncoder().encode(trulyAbsurd);
-const mindBoggling = primeNumbers
-  .flatMap((val) => absurdArray.map((uint) => uint * val))
-  .join(trulyAbsurd);
-
-export default mindBoggling;
+export default trulyAbsurd;
