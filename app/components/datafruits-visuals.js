@@ -4,6 +4,7 @@ import { inject as service } from '@ember/service';
 import { oneWay } from '@ember/object/computed';
 import Component from '@ember/component';
 import { later } from '@ember/runloop';
+import vjs from 'video.js';
 
 @classic
 @classNames('visuals')
@@ -16,6 +17,8 @@ export default class DatafruitsVisuals extends Component {
 
   @oneWay('videoStream.active')
   videoStreamActive;
+
+  _dummy = vjs;
 
   didRender() {
     if(!this.fastboot.isFastBoot){
