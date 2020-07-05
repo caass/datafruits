@@ -4,15 +4,12 @@ module.exports = {
       method: 'node',
       headful: false,
       url: 'http://localhost:4200',
-      startServerCommand: 'ember serve environment=production',
+      startServerCommand: 'ember serve --environment=PRODUCTION',
       startServerReadyPattern: 'Build successful',
       startServerReadyTimeout: 75000,
       settings: {
-        skipAudits: ['is-on-https', 'uses-http2', 'color-contrast', 'redirects-http']
+        skipAudits: ['is-on-https', 'uses-http2', 'redirects-http']
       }
-    },
-    assert: {
-      preset: 'lighthouse:recommended'
     },
     upload: {
       target: 'filesystem',
